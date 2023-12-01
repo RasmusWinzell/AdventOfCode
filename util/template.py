@@ -17,10 +17,20 @@ if __name__ == "__main__":
 
     example = puzzle.examples[0]
     puzzle_input = example.input_data
+
+    # puzzle_input = puzzle.input_data
+
+    # puzzle_input = """input"""
+
+    res = partA(puzzle_input)
+
     puzzle_answer = example.answer_a
+    # puzzle_answer = example.answer_b
+    # puzzle_answer = answer
 
-    resA = partA(puzzle_input)
-
-    assert resA == puzzle_answer, f"Part A: Expected {puzzle_answer}, got {resA}"
+    assert str(res) == str(
+        puzzle_answer
+    ), f"Part A: Expected {puzzle_answer}, got {res}"
 
     # puzzle.answer_a = resA
+    # puzzle.answer_b = res
