@@ -107,9 +107,8 @@ def open_file(puzzle: Puzzle):
 
 if __name__ == "__main__":
     puzzle = get_today_puzzle()
-    # puzzle = Puzzle(year=2020, day=1)
     wait_for_puzzle(puzzle)
-    # display_puzzle(puzzle)
+    display_puzzle(puzzle)
     summerize_puzzle(puzzle)
     create_file(puzzle)
     save_input_file(puzzle)
