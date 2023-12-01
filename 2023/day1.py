@@ -6,7 +6,7 @@ import re
 from aocd.models import Puzzle
 
 
-# Solved in 0:09:41
+# Solved in 0:09:41 (Answer: 56397)
 def partA(input):
     print(input)
     res = []
@@ -40,7 +40,7 @@ def check_digits(input: str):
     return None
 
 
-# Solved in 0:25:30
+# Solved in 0:25:30 (Answer: 55701)
 def partB(input):
     digits = {
         "one": 1,
