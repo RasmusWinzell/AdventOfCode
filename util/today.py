@@ -17,7 +17,7 @@ def get_day_file(year: int, day: int):
 
 
 def get_input_file(year: int, day: int):
-    return os.path.join(str(year), "inputs", f"day{day}.txt")
+    return os.path.join(str(year), "inputs", f"day{day:02}.txt")
 
 
 def wait_for_puzzle(puzzle: Puzzle):
