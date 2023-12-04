@@ -46,7 +46,7 @@ def get_input_files():
 
 def get_day_file(year: int, day: int):
     day_files = get_day_files()
-    format = os.path.join(str(year), rf"day{day}\.py")
+    format = os.path.join(str(year), rf"day{day:02}\.py")
     for file, status in day_files.items():
         if re.match(format, file):
             return file, status
@@ -55,7 +55,7 @@ def get_day_file(year: int, day: int):
 def get_input_file(year: int, day: int):
     input_files = get_input_files()
     print(input_files)
-    format = os.path.join(str(year), "inputs", rf"day{day}\.txt")
+    format = os.path.join(str(year), "inputs", rf"day{day:02}\.txt")
     for file, status in input_files.items():
         if re.match(format, file):
             return file, status
