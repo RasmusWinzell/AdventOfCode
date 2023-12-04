@@ -1,5 +1,5 @@
 # Advent of Code 2023 Day 2, https://adventofcode.com/2023/day/2
-# https://github.com/RasmusWinzell/AdventOfCode/blob/master/2023/2023/day2.py
+# https://github.com/RasmusWinzell/AdventOfCode/blob/master/2023/2023/day02.py
 # This is the cleaned solution
 import math
 import re

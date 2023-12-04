@@ -1,5 +1,5 @@
 # Advent of Code 2023 Day 1, https://adventofcode.com/2023/day/1
-# https://github.com/RasmusWinzell/AdventOfCode/blob/master/2023/day1.py
+# https://github.com/RasmusWinzell/AdventOfCode/blob/master/2023/day01.py
 # This is the cleaned solution
 import regex as re
 from aocd.models import Puzzle

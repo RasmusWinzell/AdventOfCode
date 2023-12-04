@@ -1,5 +1,5 @@
 # Advent of Code 2023 Day 4, https://adventofcode.com/2023/day/4
-# https://github.com/RasmusWinzell/AdventOfCode/blob/master/2023/2023/day4.py
+# https://github.com/RasmusWinzell/AdventOfCode/blob/master/2023/2023/day04.py
 # This is the cleaned solution
 import re
 
