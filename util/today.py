@@ -13,7 +13,7 @@ def get_today_puzzle():
 
 
 def get_day_file(year: int, day: int):
-    return os.path.join(str(year), f"day{day}.py")
+    return os.path.join(str(year), f"day{day:02}.py")
 
 
 def get_input_file(year: int, day: int):
