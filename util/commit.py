@@ -104,6 +104,26 @@ def set_version(file, type):
         f.write(text)
 
 
+def set_main(file, year, day):
+    with open(file, "r") as f:
+        text = f.read()
+    main_idx = text.find('if __name__ == "__main__":')
+    text = (
+        text[:main_idx]
+        + f'if __name__ == "__main__":\n    puzzle = Puzzle(year={year}, day={day})'
+        + """
+
+    puzzle_input = puzzle.input_data
+
+    answer_a = partA(puzzle_input)
+    answer_b = partB(puzzle_input)
+
+    print(f"Answer A: {answer_a}, Answer B: {answer_b}")"""
+    )
+    with open(file, "w") as f:
+        f.write(text)
+
+
 def open_file(filename):
     filepath = os.path.abspath(filename)
     os.system(f"code {filepath}")
@@ -193,6 +213,8 @@ if __name__ == "__main__":
         if input_data is not None:
             input_file, status = input_data
             add_file(input_file)
+    elif type == CLEAN:
+        set_main(file, year, day)
 
     set_version(file, type)
     add_file(file)
