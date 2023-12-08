@@ -223,4 +223,3 @@ if __name__ == "__main__":
     print("Check file changes")
     input("Press enter to continue...")
     commit(type, year, day)
-    push()
