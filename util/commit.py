@@ -118,7 +118,8 @@ def set_main(file, year, day):
     answer_a = partA(puzzle_input)
     answer_b = partB(puzzle_input)
 
-    print(f"Answer A: {answer_a}, Answer B: {answer_b}")"""
+    print(f"Answer A: {answer_a}, Answer B: {answer_b}")
+    """
     )
     with open(file, "w") as f:
         f.write(text)
