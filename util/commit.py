@@ -154,8 +154,14 @@ def get_commit_message(version, year, day):
     return message + f" ({count+1})"
 
 
-def commit(version, year, day):
-    message = get_commit_message(version, year, day)
+def list_staged():
+    res = subprocess.check_output(["git", "diff", "--staged", "--name-only"])
+    res = res.decode("utf-8")
+    for file in res.split("\n"):
+        print("\t", file)
+
+
+def commit(message):
     res = subprocess.check_output(["git", "commit", "-m", message])
     res = res.decode("utf-8")
     print(res)
@@ -220,6 +226,9 @@ if __name__ == "__main__":
     set_version(file, type)
     add_file(file)
     open_file(file)
-    print("Check file changes")
+    commit_message = get_commit_message(type, year, day)
+    print(f"Commit message: '{commit_message}'")
+    print("Staged files:")
+    list_staged()
     input("Press enter to continue...")
-    commit(type, year, day)
+    commit(commit_message)
