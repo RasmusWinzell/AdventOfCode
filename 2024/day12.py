@@ -64,8 +64,7 @@ def partB(input):
         while remove_edge(perimeter):
             edges += 1
         s += area * edges
-    print(s)
-    return 0
+    return s
 
 
 if __name__ == "__main__":
