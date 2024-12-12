@@ -4,7 +4,7 @@
 from aocd.models import Puzzle
 
 
-# Solved in 0:14:13
+# Solved in 0:07:20
 def partA(input):
     print(input)
     x = [x.split() for x in input.split("\n")]
@@ -16,7 +16,7 @@ def partA(input):
     return sum(dists)
 
 
-# Solved in 0:59:29
+# Solved in 0:19:34
 def partB(input):
     print()
     print(input)
