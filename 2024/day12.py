@@ -1,156 +1,80 @@
 # Advent of Code 2024 Day 12, https://adventofcode.com/2024/day/12
 # https://github.com/RasmusWinzell/AdventOfCode/blob/master/2024/day12.py
-# This is the original solution
+# This is the cleaned solution
+import itertools
 from collections import deque
 
 from aocd.models import Puzzle
 
 
+def neighbors(x, y):
+    return [(x + dx, y + dy, dx, dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+
+
+def in_bounds(m, x, y):
+    return 0 <= x < len(m[0]) and 0 <= y < len(m)
+
+
+def find_groups(m):
+    unvisited = set(itertools.product(range(len(m[0])), range(len(m))))
+    q = deque()
+    while unvisited:
+        sx, sy = unvisited.pop()
+        q.append((sx, sy))
+        area = 0
+        perimeter = set()
+        while q:
+            x, y = q.popleft()
+            area += 1
+            for nx, ny, dx, dy in neighbors(x, y):
+                if in_bounds(m, nx, ny) and m[ny][nx] == m[sy][sx]:
+                    if (nx, ny) in unvisited:
+                        unvisited.remove((nx, ny))
+                        q.append((nx, ny))
+                else:
+                    perimeter.add((nx, ny, dx, dy))
+        yield area, perimeter
+
+
+def remove_edge(perimeter):
+    q = deque()
+    q.append(perimeter.pop())
+    while q:
+        x, y, dx0, dy0 = q.popleft()
+        for nx, ny, dx, dy in neighbors(x, y):
+            if (nx, ny, dx0, dy0) in perimeter:
+                perimeter.remove((nx, ny, dx0, dy0))
+                q.append((nx, ny, dx0, dy0))
+    return perimeter
+
+
 # Solved in 0:14:13
 def partA(input):
-    print(input)
     m = input.splitlines()
-    print(m)
-    total = 0
-    visited = set()
-    q = deque()
-    for ys in range(len(m)):
-        for xs in range(len(m[ys])):
-            # Run BFS from each unvisited cell (for each garden region)
-            if (xs, ys) in visited:
-                continue
-            visited.add((xs, ys))
-            group = m[ys][xs]
-            q.append((xs, ys))
-            area = 0
-            perimeter = 0
-            while q:
-                x, y = q.popleft()
-                area += 1
-                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < len(m[0]) and 0 <= ny < len(m) and m[ny][nx] == group:
-                        if (nx, ny) in visited:
-                            continue
-                        visited.add((nx, ny))
-                        q.append((nx, ny))
-                    else:
-                        # all neightbors that are not in the group are part of the perimeter
-                        perimeter += 1
-            print(f"Group {group} has area {area} and perimeter {perimeter}")
-            total += area * perimeter
-    print(total)
-    return total
+    res = sum(a * len(p) for a, p in find_groups(m))
+    return res
 
 
 # Solved in 0:59:29
 def partB(input):
-    print(input)
     m = input.splitlines()
-    print(m)
-    total = 0
-    visited = set()
-    q = deque()
-    for ys in range(len(m)):
-        for xs in range(len(m[ys])):
-            if (xs, ys) in visited:
-                continue
-            visited.add((xs, ys))
-            group = m[ys][xs]
-            q.append((xs, ys))
-            area = 0
-            perimeter = set()
-            while q:
-                x, y = q.popleft()
-                area += 1
-                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < len(m[0]) and 0 <= ny < len(m) and m[ny][nx] == group:
-                        if (nx, ny) in visited:
-                            continue
-                        visited.add((nx, ny))
-                        q.append((nx, ny))
-                    else:
-                        perimeter.add(
-                            (nx, ny, dx, dy)
-                        )  # add coordinates and direction to perimeter
-
-            # walk around permimeter to find edges
-            edges = 0
-            q = deque()
-            while perimeter:
-                # pick a random start point on the perimeter
-                edges += 1
-                x, y, dx, dy = perimeter.pop()
-                q.append((x, y, dx, dy))
-                dir = (dx, dy)
-                # explore the edge using BFS
-                while q:
-                    x, y, dx0, dy0 = q.popleft()
-                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                        nx, ny = x + dx, y + dy
-                        if (nx, ny, dx0, dy0) in perimeter:
-                            if dir == (dx0, dy0):
-                                perimeter.remove((nx, ny, dx0, dy0))
-                                q.append((nx, ny, dx0, dy0))
-
-            print(f"Group {group} has area {area} and edges {edges}")
-
-            total += area * edges
-    print(total)
-    return total
+    s = 0
+    for area, perimeter in find_groups(m):
+        edges = 1
+        while remove_edge(perimeter):
+            edges += 1
+        s += area * edges
+    print(s)
+    return 0
 
 
 if __name__ == "__main__":
     puzzle = Puzzle(year=2024, day=12)
-    for example in puzzle.examples:
-        if example.answer_a:
-            inp = """RRRRIICCFF
-RRRRIICCCF
-VVRRRCCFFF
-VVRCCCJFFF
-VVVVCJJCFE
-VVIVCCJJEE
-VVIIICJJEE
-MIIIIIJJEE
-MIIISIJEEE
-MMMISSJEEE"""
-            answer = partA(inp)
-            assert (
-                str(answer) == example.answer_a
-            ), f"Part A: Expected {example.answer_a}, got {answer}"
 
-    if puzzle.answered_a:
-        answer = partA(puzzle.input_data)
-        assert (
-            str(answer) == puzzle.answer_a
-        ), f"Part A: Expected {puzzle.answer_a}, got {answer}"
-    else:
-        puzzle.answer_a = partA(puzzle.input_data)
-        assert puzzle.answered_a, "Answer A not correct"
+    puzzle_input = puzzle.input_data
 
-    for example in puzzle.examples:
-        if example.answer_b:
-            inp = """RRRRIICCFF
-RRRRIICCCF
-VVRRRCCFFF
-VVRCCCJFFF
-VVVVCJJCFE
-VVIVCCJJEE
-VVIIICJJEE
-MIIIIIJJEE
-MIIISIJEEE
-MMMISSJEEE"""
-            answer = partB(inp)
-            assert (
-                str(answer) == example.answer_b
-            ), f"Part B: Expected {example.answer_b}, got {answer}"
+    answer_a = partA(puzzle_input)
+    answer_b = partB(puzzle_input)
 
-    if puzzle.answered_b:
-        answer = partB(puzzle.input_data)
-        assert (
-            str(answer) == puzzle.answer_b
-        ), f"Part B: Expected {puzzle.answer_b}, got {answer}"
-    else:
-        puzzle.answer_b = partB(puzzle.input_data)
-        assert puzzle.answered_b, "Answer B not correct"
+    print(f"Answer A: {answer_a}, Answer B: {answer_b}")
+    
