@@ -1,58 +1,48 @@
 # Advent of Code 2024 Day 24, https://adventofcode.com/2024/day/24
 # https://github.com/RasmusWinzell/AdventOfCode/blob/master/2024/day24.py
 # This is the original solution
-from collections import defaultdict
-from random import randint
+from collections import defaultdict, deque
+from functools import cache
+from operator import and_, itemgetter, or_, xor
 
+import matplotlib.pyplot as plt
+import networkx as nx
 from aocd.models import Puzzle
+
+OPS = {"AND": and_, "OR": or_, "XOR": xor}
 
 
 # Solved in 0:32:51
 def partA(input):
-    regs = {}
-    intsructions = []
-    ouput_regs = set()
-    for line in input.split("\n"):
-        if not line:
-            continue
-        if ": " in line:
-            reg, val = line.split(": ")
-            regs[reg] = int(val)
-            continue
-        r1, op, r2, _, r3 = line.split()
-        intsructions.append((r1, op, r2, r3))
-        if "z" in r3:
-            ouput_regs.add(r3)
-
-    visited = set()
-    while regs.keys() & ouput_regs != ouput_regs:
-        for r1, op, r2, r3 in intsructions:
-            if r1 not in regs or r2 not in regs:
-                continue
-            if (r1, op, r2, r3) in visited:
-                continue
-            visited.add((r1, op, r2, r3))
-            if op == "AND":
-                regs[r3] = regs[r1] & regs[r2]
-            elif op == "OR":
-                regs[r3] = regs[r1] | regs[r2]
-            elif op == "XOR":
-                regs[r3] = regs[r1] ^ regs[r2]
-
-    for k, v in sorted(regs.items()):
-        print(k, v)
-
-    res = ""
-    for k in sorted(regs, reverse=True):
-        if "z" in k:
-            res += str(regs[k])
-    res = int(res, 2)
-    print(res)
-    return res
+    regs_sec, instr_sec = [sec.split("\n") for sec in input.split("\n\n")]
+    regs = {line[:3]: int(line[-1]) | 2 for line in regs_sec}
+    k = {c: (o, (a, b)) for a, o, b, _, c in map(str.split, instr_sec)}
+    calc = cache(lambda r: regs.get(r) or OPS[k[r][0]](*map(calc, k[r][1])))
+    return sum((calc(z) & 1) << int(z[1:]) for z in k if "z" in z)
 
 
 # Solved in 5:48:39
 def partB(input):
+    regs_sec, instr_sec = [sec.split("\n") for sec in input.split("\n\n")]
+    regs = {line[:3]: int(line[-1]) | 2 for line in regs_sec}
+    k = {c: (o, (a, b)) for a, o, b, _, c in map(str.split, instr_sec)}
+
+    visited = set()
+
+    def structure(num):
+        a = "x" + num
+        b = "y" + num
+
+    last_visited = set()
+    for z in sorted(k):
+        if "z" in z:
+            visited.clear()
+            structure(z)
+            old = visited & last_visited
+            print(z, visited, old)
+            last_visited |= visited
+
+    exit()
     regs = set()
     naming = {}
     for line in input.split("\n"):

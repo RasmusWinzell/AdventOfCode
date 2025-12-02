@@ -75,20 +75,11 @@ def repeat_input(input, radius):
 
 # Solved in 4:31:14 (Answer: 594115391548176)
 def partB(input, in_steps=26501365):
-    res = []
     size = input.count("\n") + 1
-    y = []
-    print(size)
-    rinput = repeat_input(input, 500 // size + 1)
-    for steps in range(1, 500):
-        res.append(partA(rinput, steps))
-        if steps % size == in_steps % size:
-            y.append(res[-1])
-            print("found", y[-1])
-            if len(y) == 3:
-                break
+    steps = [in_steps % size + size * i for i in range(3)]
+    rinput = repeat_input(input, steps[-1] // size + 1)
+    y = [partA(rinput, step) for step in steps]
 
-    print(res)
     print(y)
 
     a = (y[2] + y[0] - 2 * y[1]) // 2

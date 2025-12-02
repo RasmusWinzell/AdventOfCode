@@ -93,4 +93,3 @@ if __name__ == "__main__":
     answer_b = partB(puzzle_input)
 
     print(f"Answer A: {answer_a}, Answer B: {answer_b}")
-    

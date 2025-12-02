@@ -33,11 +33,13 @@ def partA(input):
     lines = [line[0] + "." for line in data]
     goals = [tuple(map(int, line[1].split(","))) for line in data]
     count = 0
+    counts = []
     for line, goal in zip(lines, goals):
         res = check_spring(line, 0, goal)
-        print(res)
+        # print(res)
         count += res
-    return count
+        counts.append(res)
+    return count, counts
 
 
 @cache
@@ -78,6 +80,80 @@ def partB(input):
     return count
 
 
+from itertools import product, zip_longest
+
+
+def goal_solotions(goal, length):
+    min_length = sum(goal) + len(goal) - 1
+    diff = length - min_length
+    # print(diff)
+    msplit = (0,) + (1,) * (len(goal) - 1) + (0,)
+    if diff > 0:
+        bin_assignments = list(product(range(diff + 1), repeat=len(goal) + 1))
+        # Filter out combinations where the sum of bin assignments is equal to N
+        # print(bin_assignments)
+        valid_splits = [split for split in bin_assignments if sum(split) == diff]
+    else:
+        valid_splits = [()]
+    # print(valid_splits)
+    solutions = []
+    test = []
+    for split in sorted(valid_splits):
+        full_split = [s1 + s2 for s1, s2 in zip_longest(msplit, split, fillvalue=0)]
+        res = ""
+        # print(split, full_split, goal)
+        for a, b in zip_longest(full_split, goal, fillvalue=0):
+            res += "0" * a + "1" * b
+        # print(res)
+        test.append((int(res, 2), full_split))
+        solutions.append(int(res, 2))
+    t10 = -1
+    t20 = -1
+    for t1, t2 in sorted(test):
+        if t1 == t10:
+            # print(t1, t2, t20)
+            pass
+        t10 = t1
+        t20 = t2
+    return sorted(test)
+
+
+def partC(input: str):
+    _, costs = partA(input)
+    data = [line.split() for line in input.splitlines()]
+    lines = [line[0] for line in data]
+    goals = [list(map(int, line[1].split(","))) for line in data]
+    res = 0
+    # lines = lines[2:3]
+    # goals = goals[2:3]
+    for i, (line, goal, c) in enumerate(zip(lines, goals, costs)):
+        print(i)
+        # if i != 992:
+        #     continue
+        line = "?".join([line] * 5)
+        goal = goal * 5
+
+        damaged = int("".join("1" if c == "#" else "0" for c in line), 2)
+        mask = int("".join("0" if c == "?" else "1" for c in line), 2)
+        # print(line, goal)
+        # print(bin(damaged), bin(mask))
+        solutions = goal_solotions(goal, len(line))
+        count = 0
+        for solution, split in solutions:
+            diff = solution ^ damaged
+            masked_diff = diff & mask
+            # print(bin(solution)[2:])
+            if masked_diff == 0:
+                count += 1
+                # print(bin(solution), split)
+        if count != c:
+            print("Not correct", i, line, goal, count, c)
+        res += count
+        # print(count)
+
+    return res
+
+
 if __name__ == "__main__":
     puzzle = Puzzle(year=2023, day=12)
     # for example in puzzle.examples:
@@ -87,27 +163,31 @@ if __name__ == "__main__":
     #             str(answer) == example.answer_a
     #         ), f"Part A: Expected {example.answer_a}, got {answer}"
 
-    print(
-        partB(
-            """???.### 1,1,3
-.??..??...?##. 1,1,3
-?#?#?#?#?#?#?#? 1,3,1,6
-????.#...#... 4,1,1
-????.######..#####. 1,6,5
-?###???????? 3,2,1"""
-        )
-    )
-    # print(partB(puzzle.input_data))
+    #     print(
+    #         partC(
+    #             """???.### 1,1,3
+    # .??..??...?##. 1,1,3
+    # ?#?#?#?#?#?#?#? 1,3,1,6
+    # ????.#...#... 4,1,1
+    # ????.######..#####. 1,6,5
+    # ?###???????? 3,2,1"""
+    #         )
+    #     )
+    import time
 
+    t0 = time.perf_counter()
+    print(partB(puzzle.input_data))
+    t1 = time.perf_counter()
+    print(t1 - t0)
+    exit()
     if puzzle.answered_a:
-        answer = partA(puzzle.input_data)
+        answer = partC(puzzle.input_data)
         assert (
             str(answer) == puzzle.answer_a
         ), f"Part A: Expected {puzzle.answer_a}, got {answer}"
     else:
         puzzle.answer_a = partA(puzzle.input_data)
         assert puzzle.answered_a, "Answer A not correct"
-
     # for example in puzzle.examples:
     #     if example.answer_b:
     #         answer = partB(example.input_data)

@@ -17,6 +17,11 @@ def partA(input):
     locks = [[6 - sum(map(int, r)) for r in zip(*s)] for s in schems if "1" in s[0]]
     keys = [[sum(map(int, r)) - 1 for r in zip(*s)] for s in schems if "1" in s[-1]]
     assert len(locks) + len(keys) == len(schems)
+
+    x = set(map(tuple, keys))
+    y = set(map(tuple, locks))
+    print(len(x), len(keys), len(y), len(locks))
+
     locks2 = [[] for _ in range(5 * 5)]
     for lock in locks:
         locks2[sum(lock)].append(lock)

@@ -68,7 +68,7 @@ def set_results(file: str, puzzle: Puzzle):
         time_b = stats["b"]["time"]
         answer_a = puzzle.answer_a
         answer_b = puzzle.answer_b
-    except Exception:
+    except Exception as e:
         print("No stats found")
         res = input("Continue? (y/n) ")
         if res != "y":
@@ -82,9 +82,9 @@ def set_results(file: str, puzzle: Puzzle):
             new_lines.append(line)
             continue
         if line.startswith("def partA"):
-            new_lines.append(f"# Solved in {str(time_a)} (Answer: {answer_a})\n")
+            new_lines.append(f"# Solved in {str(time_a)}\n")
         if line.startswith("def partB"):
-            new_lines.append(f"# Solved in {str(time_b)} (Answer: {answer_b})\n")
+            new_lines.append(f"# Solved in {str(time_b)}\n")
         new_lines.append(line)
     with open(file, "w") as f:
         f.writelines(new_lines)
@@ -197,6 +197,7 @@ if __name__ == "__main__":
     day = args.day or datetime.datetime.today().day
 
     file, status = get_day_file(year, day)
+    # file, status = "2024/day01.py", UNTRACKED
     print(f"Found file {file} with status {status}")
     predicted_type = FIRST if status == UNTRACKED else CLEAN
 
@@ -216,10 +217,10 @@ if __name__ == "__main__":
         puzzle = Puzzle(year=year, day=day)
         set_results(file, puzzle)
 
-        input_data = get_input_file(year, day)
-        if input_data is not None:
-            input_file, status = input_data
-            add_file(input_file)
+        # input_data = get_input_file(year, day)
+        # if input_data is not None:
+        #     input_file, status = input_data
+        #     add_file(input_file)
     elif type == CLEAN:
         set_main(file, year, day)
 

@@ -1,5 +1,5 @@
 # Advent of Code "#year" Day "#day", "#puzzle_link"
-# https://github.com/RasmusWinzell/AdventOfCode/blob/master/"#year"/"#filename"
+# https://github.com/RasmusWinzell/AdventOfCode/blob/master/"#filename"
 # "#version"
 from aocd.models import Puzzle
 
