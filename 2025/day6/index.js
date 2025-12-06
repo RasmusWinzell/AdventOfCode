@@ -1,65 +1,20 @@
 import fs from "fs"
 
+const ops = {"+": [(a,b) => a+b, 0], "*": [(a,b) => a*b, 1]}
+
+
 function partOne(file) {
-    const lines = fs.readFileSync(file, "utf8").trim().split("\n")
-    let rows = lines.map(l => l.match(/\S+/g))
-    let nums = rows.slice(0, -1).map(r => r.map(Number))
-    let ops = rows[rows.length - 1]
-    console.log(rows.slice(0, -1))
-    console.log(ops)
-    let total = 0
-    for (let i = 0; i < ops.length; i++) {
-        let op = ops[i]
-        let t = 0
-        let arr = nums.map(n => n[i])
-        if (op === "+") {
-            t = arr.reduce((s,n) => s + n, 0)
-        } else if (op === "*") {
-            t = arr.reduce((s,n) => s * n, 1)
-            console.log("MULT")
-        }
-        console.log({op, arr, t})
-        total += t
-    }
-    console.log(total)
+    const lines = fs.readFileSync(file, "utf8").trim().split("\n").reverse().map(l => l.match(/\S+/g))
+    let res = lines[0].reduce((t,_,i) => t+lines.reduce(([o,s],v) => !o?ops[v[i]]:[o, o(s,+v[i])], [])[1], 0)
+    console.log(res)
 }
 
 function partTwo(file) {
     const lines = fs.readFileSync(file, "utf8").split("\n")
-    let op = null
-    let partTotal = 0
-    let total = 0
-    for (let col = 0; col < lines[0].length; col++) {
-        console.log("---------------------")
-        let part = ""
-        for (let row = lines.length - 1; row >= 0; row--) {
-            if (lines[row][col] !== " ") {
-                console.log({row, col, char: lines[row][col], part, partTotal, total, op})
-                if (row === lines.length - 1) {
-                    total += partTotal
-                    op = lines[row][col]
-                    partTotal = op === "+" ? 0 : 1
-                    console.log("NEW OP", {op, total})
-                    continue
-                }
-                console.log("here")
-                
-                console.log("adding char", lines[row][col])
-                part += lines[row][col]
-            }
-            if (!row && part.length > 0) {
-                if (op === "+") {
-                    partTotal += Number(part.split("").reverse().join(""))
-                } else if (op === "*") {
-                    partTotal *= Number(part.split("").reverse().join(""))
-                }
-                continue
-            }
-
-        }
-    }
-    total += partTotal
-    console.log(total)
+    let op = [...(lines.pop()+" ").matchAll(/\S\s+/g)].map((m) => [m[0], m.index])
+    let nums = lines[0].split("").map((c, i) => +lines.map(l => l[i]).join(""))
+    let res = op.reduce((t,[m,i]) => t+nums.slice(i, i+m.length-1).reduce(...ops[m[0]]), 0)
+    console.log(res)
 }
 
 partOne("./example.txt")
